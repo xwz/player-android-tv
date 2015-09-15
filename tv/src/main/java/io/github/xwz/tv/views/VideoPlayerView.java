@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.github.xwz.tv.R;
-import io.github.xwz.tv.models.EpisodeModel;
+import io.github.xwz.tv.models.IEpisodeModel;
 import io.github.xwz.tv.player.VideoPlayer;
 
 public class VideoPlayerView {
@@ -146,7 +146,7 @@ public class VideoPlayerView {
         }
     }
 
-    public void setEpisode(EpisodeModel episode) {
+    public void setEpisode(IEpisodeModel episode) {
         episodeTitle.setText(episode.getTitle());
         seriesTitle.setText(episode.getSeriesTitle());
         duration.setText(episode.getDurationText());
@@ -272,7 +272,7 @@ public class VideoPlayerView {
         }, 3000);
     }
 
-    public void suggestNextEpisode(EpisodeModel episode) {
+    public void suggestNextEpisode(IEpisodeModel episode) {
         nextEpisode.setEpisode(episode);
         nextEpisodeCard.setVisibility(View.VISIBLE);
     }

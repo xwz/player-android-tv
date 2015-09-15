@@ -4,7 +4,7 @@ import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
 import android.view.ViewGroup;
 
-import io.github.xwz.tv.models.EpisodeModel;
+import io.github.xwz.tv.models.IEpisodeModel;
 import io.github.xwz.tv.views.EpisodeCardView;
 
 public class EpisodePresenter extends Presenter {
@@ -20,7 +20,7 @@ public class EpisodePresenter extends Presenter {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Object item) {
-        ((EpisodeCardView) viewHolder).setEpisode((EpisodeModel) item);
+        ((EpisodeCardView) viewHolder).setEpisode((IEpisodeModel) item);
     }
 
     @Override

@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public interface EpisodeModel extends Serializable {
+public interface IEpisodeModel extends Serializable {
 
-    public void merge(EpisodeModel ep);
+    public void merge(IEpisodeModel ep);
 
-    void setOtherEpisodes(Map<String, List<EpisodeModel>> more);
+    void setOtherEpisodes(Map<String, List<IEpisodeModel>> more);
 
-    Map<String, List<EpisodeModel>> getOtherEpisodes();
+    Map<String, List<IEpisodeModel>> getOtherEpisodes();
 
     List<String> getOtherEpisodeUrls(String cat);
 

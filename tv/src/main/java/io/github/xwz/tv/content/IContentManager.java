@@ -4,13 +4,12 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.net.Uri;
 
-import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import io.github.xwz.tv.models.EpisodeModel;
+import io.github.xwz.tv.models.IEpisodeModel;
 
-public interface ContentManager {
+public interface IContentManager {
 
     public static final String CONTENT_ID = "io.github.xwz.abciview.CONTENT_ID";
     public static final String CONTENT_TAG = "io.github.xwz.abciview.CONTENT_TAG";
@@ -50,13 +49,13 @@ public interface ContentManager {
     public static final String KEY_EXTRA_NAME = SearchManager.EXTRA_DATA_KEY;
 
     public void updateRecommendations(Context context);
-    public LinkedHashMap<String, List<EpisodeModel>> getAllShowsByCategories();
+    public LinkedHashMap<String, List<IEpisodeModel>> getAllShowsByCategories();
     public void fetchShowList();
-    public EpisodeModel getEpisode(String href);
-    public void fetchEpisode(EpisodeModel episode);
+    public IEpisodeModel getEpisode(String href);
+    public void fetchEpisode(IEpisodeModel episode);
     public List<String> suggestions(String query);
-    public List<EpisodeModel> searchShows(String query);
-    public void fetchAuthToken(EpisodeModel episode);
-    public Uri getEpisodeStreamUrl(EpisodeModel episode);
-    public EpisodeModel findNextEpisode(List<String> urls, String current);
+    public List<IEpisodeModel> searchShows(String query);
+    public void fetchAuthToken(IEpisodeModel episode);
+    public Uri getEpisodeStreamUrl(IEpisodeModel episode);
+    public IEpisodeModel findNextEpisode(List<String> urls, String current);
 }

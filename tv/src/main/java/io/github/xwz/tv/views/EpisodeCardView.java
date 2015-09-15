@@ -8,7 +8,7 @@ import android.support.v17.leanback.widget.Presenter;
 import com.squareup.picasso.Picasso;
 
 import io.github.xwz.tv.R;
-import io.github.xwz.tv.models.EpisodeModel;
+import io.github.xwz.tv.models.IEpisodeModel;
 
 public class EpisodeCardView extends Presenter.ViewHolder {
     private static final String TAG = "EpisodeCardView";
@@ -26,7 +26,7 @@ public class EpisodeCardView extends Presenter.ViewHolder {
         card.setMainImageDimensions(size.x, size.y);
     }
 
-    public void setEpisode(EpisodeModel ep) {
+    public void setEpisode(IEpisodeModel ep) {
         card.setTitleText(ep.getSeriesTitle());
         card.setContentText(ep.getTitle());
         if (ep.getEpisodeCount() > 0) {

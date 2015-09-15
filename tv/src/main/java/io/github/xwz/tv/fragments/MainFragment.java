@@ -7,16 +7,13 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
-import android.support.v17.leanback.widget.BrowseFrameLayout;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnItemViewClickedListener;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
@@ -25,8 +22,8 @@ import java.util.List;
 
 import io.github.xwz.tv.adapters.BaseArrayAdapter;
 import io.github.xwz.tv.adapters.EpisodePresenter;
-import io.github.xwz.tv.content.ContentManager;
-import io.github.xwz.tv.models.EpisodeModel;
+import io.github.xwz.tv.content.IContentManager;
+import io.github.xwz.tv.models.IEpisodeModel;
 
 public abstract class MainFragment extends BrowseFragment {
 
@@ -38,14 +35,14 @@ public abstract class MainFragment extends BrowseFragment {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             Log.d(TAG, "Action: " + action);
-            if (ContentManager.CONTENT_SHOW_LIST_DONE.equals(action)) {
+            if (IContentManager.CONTENT_SHOW_LIST_DONE.equals(action)) {
                 updateAdapter();
                 getContentManger().updateRecommendations(getActivity());
             }
         }
     };
 
-    protected abstract ContentManager getContentManger();
+    protected abstract IContentManager getContentManger();
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -85,7 +82,7 @@ public abstract class MainFragment extends BrowseFragment {
     protected abstract OnItemViewClickedListener getItemClickedListener();
 
     private void updateRows(ArrayObjectAdapter adapter) {
-        LinkedHashMap<String, List<EpisodeModel>> all = getContentManger().getAllShowsByCategories();
+        LinkedHashMap<String, List<IEpisodeModel>> all = getContentManger().getAllShowsByCategories();
         int currentRows = adapter.size();
         int newRows = all.size();
         EpisodePresenter card = new EpisodePresenter();
@@ -95,10 +92,10 @@ public abstract class MainFragment extends BrowseFragment {
             if (i < currentRows) { // update row
                 ListRow row = (ListRow) adapter.get(i);
                 row.setHeaderItem(new HeaderItem(category));
-                BaseArrayAdapter<EpisodeModel> items = (BaseArrayAdapter<EpisodeModel>) row.getAdapter();
+                BaseArrayAdapter<IEpisodeModel> items = (BaseArrayAdapter<IEpisodeModel>) row.getAdapter();
                 items.replaceItems(all.get(category));
             } else { // add
-                BaseArrayAdapter<EpisodeModel> items = new BaseArrayAdapter<>(card);
+                BaseArrayAdapter<IEpisodeModel> items = new BaseArrayAdapter<>(card);
                 items.addAll(0, all.get(category));
                 HeaderItem header = new HeaderItem(category);
                 ListRow row = new ListRow(header, items);
@@ -138,9 +135,9 @@ public abstract class MainFragment extends BrowseFragment {
     private void registerReceiver() {
         Log.i(TAG, "Register receiver");
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ContentManager.CONTENT_SHOW_LIST_START);
-        filter.addAction(ContentManager.CONTENT_SHOW_LIST_DONE);
-        filter.addAction(ContentManager.CONTENT_SHOW_LIST_ERROR);
+        filter.addAction(IContentManager.CONTENT_SHOW_LIST_START);
+        filter.addAction(IContentManager.CONTENT_SHOW_LIST_DONE);
+        filter.addAction(IContentManager.CONTENT_SHOW_LIST_ERROR);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
     }
 }

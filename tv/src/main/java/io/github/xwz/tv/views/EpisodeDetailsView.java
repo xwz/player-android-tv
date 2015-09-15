@@ -12,7 +12,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import io.github.xwz.tv.R;
-import io.github.xwz.tv.models.EpisodeModel;
+import io.github.xwz.tv.models.IEpisodeModel;
 import jp.wasabeef.picasso.transformations.gpu.VignetteFilterTransformation;
 
 public class EpisodeDetailsView extends Presenter.ViewHolder {
@@ -45,7 +45,7 @@ public class EpisodeDetailsView extends Presenter.ViewHolder {
         loader = new EpisodeLoader();
     }
 
-    public void setEpisode(EpisodeModel episode) {
+    public void setEpisode(IEpisodeModel episode) {
         episodeTitle.setText(episode.getTitle());
         seriesTitle.setText(episode.getSeriesTitle());
         duration.setText(episode.getDurationText());
@@ -55,20 +55,20 @@ public class EpisodeDetailsView extends Presenter.ViewHolder {
         loadEpisodeDetails(episode);
     }
 
-    public void updateEpisode(EpisodeModel episode) {
+    public void updateEpisode(IEpisodeModel episode) {
         description.setText(episode.getDescription());
     }
 
-    private void loadEpisodeDetails(EpisodeModel episode) {
+    private void loadEpisodeDetails(IEpisodeModel episode) {
         loader.setEpisode(episode);
         handler.removeCallbacks(loader);
         handler.postDelayed(loader, LOADER_DELAY_MS);
     }
 
     private class EpisodeLoader implements Runnable {
-        private EpisodeModel episode;
+        private IEpisodeModel episode;
 
-        public void setEpisode(EpisodeModel ep) {
+        public void setEpisode(IEpisodeModel ep) {
             episode = ep;
         }
 

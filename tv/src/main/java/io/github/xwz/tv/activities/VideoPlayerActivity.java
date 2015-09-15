@@ -39,8 +39,8 @@ import java.util.List;
 
 import io.github.xwz.tv.R;
 import io.github.xwz.tv.Utils;
-import io.github.xwz.tv.content.ContentManager;
-import io.github.xwz.tv.models.EpisodeModel;
+import io.github.xwz.tv.content.IContentManager;
+import io.github.xwz.tv.models.IEpisodeModel;
 import io.github.xwz.tv.player.DurationLogger;
 import io.github.xwz.tv.player.EventLogger;
 import io.github.xwz.tv.player.HlsRendererBuilder;
@@ -83,7 +83,7 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
 
     private boolean ready = false;
 
-    private EpisodeModel mCurrentEpisode;
+    private IEpisodeModel mCurrentEpisode;
     private List<String> mOtherEpisodeUrls;
     private long resumePosition;
 
@@ -91,11 +91,11 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.d(TAG, "Action: " + action + ", tag: " + intent.getStringExtra(ContentManager.CONTENT_TAG));
-            if (ContentManager.CONTENT_AUTH_DONE.equals(action)) {
+            Log.d(TAG, "Action: " + action + ", tag: " + intent.getStringExtra(IContentManager.CONTENT_TAG));
+            if (IContentManager.CONTENT_AUTH_DONE.equals(action)) {
                 prepareStream(intent);
             }
-            if (ContentManager.CONTENT_AUTH_ERROR.equals(action)) {
+            if (IContentManager.CONTENT_AUTH_ERROR.equals(action)) {
                 authFailed(intent);
             }
         }
@@ -104,8 +104,8 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EpisodeModel episode = (EpisodeModel) getIntent().getSerializableExtra(ContentManager.CONTENT_ID);
-        mOtherEpisodeUrls = Arrays.asList(getIntent().getStringArrayExtra(ContentManager.OTHER_EPISODES));
+        IEpisodeModel episode = (IEpisodeModel) getIntent().getSerializableExtra(IContentManager.CONTENT_ID);
+        mOtherEpisodeUrls = Arrays.asList(getIntent().getStringArrayExtra(IContentManager.OTHER_EPISODES));
         resumePosition = getIntent().getLongExtra(RESUME_POSITION, 0);
 
         setContentView(R.layout.video_player_activity);
@@ -125,7 +125,7 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
         playEpisode(episode);
     }
 
-    private void playEpisode(EpisodeModel episode) {
+    private void playEpisode(IEpisodeModel episode) {
         releasePlayer();
         playerPosition = resumePosition;
         ready = false;
@@ -134,7 +134,7 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
         getContentManger().fetchAuthToken(episode);
     }
 
-    protected abstract ContentManager getContentManger();
+    protected abstract IContentManager getContentManger();
 
     private void prepareStream(Intent intent) {
         contentUri = getContentManger().getEpisodeStreamUrl(mCurrentEpisode);
@@ -146,8 +146,8 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
     }
 
     private void authFailed(Intent intent) {
-        String href = intent.getStringExtra(ContentManager.CONTENT_ID);
-        String error = intent.getStringExtra(ContentManager.CONTENT_TAG);
+        String href = intent.getStringExtra(IContentManager.CONTENT_ID);
+        String error = intent.getStringExtra(IContentManager.CONTENT_TAG);
         Log.e(TAG, error + ":" + href);
         Utils.showToast(this, error);
     }
@@ -174,9 +174,9 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
     private void registerReceiver() {
         Log.i(TAG, "Register receiver");
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ContentManager.CONTENT_AUTH_START);
-        filter.addAction(ContentManager.CONTENT_AUTH_DONE);
-        filter.addAction(ContentManager.CONTENT_AUTH_ERROR);
+        filter.addAction(IContentManager.CONTENT_AUTH_START);
+        filter.addAction(IContentManager.CONTENT_AUTH_DONE);
+        filter.addAction(IContentManager.CONTENT_AUTH_ERROR);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
     }
 
@@ -322,9 +322,9 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
 
     private void updateMediaSessionIntent() {
         Intent intent = new Intent(this, VideoPlayerActivity.class);
-        intent.putExtra(ContentManager.CONTENT_ID, mCurrentEpisode);
+        intent.putExtra(IContentManager.CONTENT_ID, mCurrentEpisode);
         String[] others = mOtherEpisodeUrls.toArray(new String[mOtherEpisodeUrls.size()]);
-        intent.putExtra(ContentManager.OTHER_EPISODES, others);
+        intent.putExtra(IContentManager.OTHER_EPISODES, others);
         intent.putExtra(RESUME_POSITION, playerPosition);
 
         PendingIntent pending = PendingIntent.getActivity(this, 99, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -349,7 +349,7 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
     }
 
     private View.OnClickListener getNextEpisodeListener() {
-        EpisodeModel next = getNextEpisode(mCurrentEpisode);
+        IEpisodeModel next = getNextEpisode(mCurrentEpisode);
         Log.d(TAG, "next episode:" + next);
         if (next != null) {
             return new View.OnClickListener() {
@@ -363,7 +363,7 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
     }
 
     private View.OnClickListener getPrevEpisodeListener() {
-        EpisodeModel prev = getPrevEpisode(mCurrentEpisode);
+        IEpisodeModel prev = getPrevEpisode(mCurrentEpisode);
         Log.d(TAG, "previous episode:" + prev);
         if (prev != null) {
             return new View.OnClickListener() {
@@ -376,18 +376,18 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
         return null;
     }
 
-    private EpisodeModel getNextEpisode(EpisodeModel current) {
+    private IEpisodeModel getNextEpisode(IEpisodeModel current) {
         return getContentManger().findNextEpisode(mOtherEpisodeUrls, current.getHref());
     }
 
-    private EpisodeModel getPrevEpisode(EpisodeModel current) {
+    private IEpisodeModel getPrevEpisode(IEpisodeModel current) {
         List<String> others = new ArrayList<>(mOtherEpisodeUrls);
         Collections.reverse(others);
         return getContentManger().findNextEpisode(others, current.getHref());
     }
 
     private void suggestNextEpisode() {
-        EpisodeModel next = getNextEpisode(mCurrentEpisode);
+        IEpisodeModel next = getNextEpisode(mCurrentEpisode);
         Log.d(TAG, "Suggest next episode: " + next);
         if (next != null) {
             videoPlayerView.suggestNextEpisode(next);
@@ -395,7 +395,7 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
     }
 
     private void playNextEpisode() {
-        EpisodeModel next = getNextEpisode(mCurrentEpisode);
+        IEpisodeModel next = getNextEpisode(mCurrentEpisode);
         Log.d(TAG, "Play next episode: " + next);
         if (next != null) {
             playEpisode(next);
@@ -403,7 +403,7 @@ public abstract class VideoPlayerActivity extends BaseActivity implements Surfac
     }
 
     private void playPrevEpisode() {
-        EpisodeModel next = getPrevEpisode(mCurrentEpisode);
+        IEpisodeModel next = getPrevEpisode(mCurrentEpisode);
         Log.d(TAG, "Play previous episode: " + next);
         if (next != null) {
             playEpisode(next);

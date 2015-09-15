@@ -15,8 +15,8 @@ import java.util.List;
 
 import io.github.xwz.tv.R;
 import io.github.xwz.tv.adapters.EpisodePresenter;
-import io.github.xwz.tv.content.ContentManager;
-import io.github.xwz.tv.models.EpisodeModel;
+import io.github.xwz.tv.content.IContentManager;
+import io.github.xwz.tv.models.IEpisodeModel;
 
 public abstract class SearchFragment extends android.support.v17.leanback.app.SearchFragment
         implements android.support.v17.leanback.app.SearchFragment.SearchResultProvider {
@@ -43,7 +43,7 @@ public abstract class SearchFragment extends android.support.v17.leanback.app.Se
         return adapter;
     }
 
-    protected abstract ContentManager getContentManger();
+    protected abstract IContentManager getContentManger();
 
     protected abstract OnItemViewClickedListener getItemClickedListener();
 
@@ -80,7 +80,7 @@ public abstract class SearchFragment extends android.support.v17.leanback.app.Se
 
         @Override
         public void run() {
-            List<EpisodeModel> results = getContentManger().searchShows(query);
+            List<IEpisodeModel> results = getContentManger().searchShows(query);
             EpisodePresenter card = new EpisodePresenter();
             ArrayObjectAdapter row = new ArrayObjectAdapter(card);
             row.addAll(0, results);
