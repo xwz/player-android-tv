@@ -59,6 +59,10 @@ public abstract class DetailsFragment extends android.support.v17.leanback.app.R
         }
     };
 
+    protected List<String> getOtherEpisodeUrls() {
+        return mOtherEpisodeUrls;
+    }
+
     protected abstract IContentManager getContentManger();
 
     @Override

@@ -52,6 +52,10 @@ public abstract class MainFragment extends BrowseFragment {
         setupListeners();
     }
 
+    protected void setProgress(ProgressBar bar) {
+        progress = bar;
+    }
+
     @SuppressWarnings("deprecation")
     protected abstract void setupUIElements();
     /*{

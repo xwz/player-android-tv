@@ -7,6 +7,7 @@ import java.util.Map;
 public interface IEpisodeModel extends Serializable {
 
     public void merge(IEpisodeModel ep);
+    public boolean matches(String query);
 
     void setOtherEpisodes(Map<String, List<IEpisodeModel>> more);
 
